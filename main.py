@@ -5,6 +5,7 @@ import numpy as np
 from dataset import Dataset
 from gui import GUI
 
+from image import remove_redundancy
 
 OUTCOME_DIR = "./dataset"
 INPUT_DATA_DIR = "./data"
@@ -25,7 +26,7 @@ class App(GUI):
         self.cur_dataset = self.input_data[self.cur_dataset_idx]
         self.hash_list = self.get_hash_from_cur()
 
-        self.img_show(self.get_imgs_from_cur())
+        self.sync()
 
     def get_hash_from_cur(self):
         return self.cur_dataset.get_hash()
@@ -65,16 +66,14 @@ class App(GUI):
             self.prev_file()
         except IndexError:
             pass
-        images = self.get_imgs_from_cur()
-        self.img_show(images)
+        self.sync()
 
     def next_button_event(self):
         try:
             self.next_file()
         except IndexError:
             pass
-        images = self.get_imgs_from_cur()
-        self.img_show(images)
+        self.sync()
 
     def select_button_event(self):
         hash = self.hash_list[self.cur_hash_idx]
@@ -84,6 +83,36 @@ class App(GUI):
     def delete_button_event(self):
         hash = self.hash_list[self.cur_hash_idx]
         self.outcome.delete(hash)
+
+    def move_button_event(self):
+        inp1 = self.move_ibox1.get(1.0, "end-1c")
+        inp2 = self.move_ibox2.get(1.0, "end-1c")
+        self.cur_dataset_idx = int(inp1)
+        self.cur_hash_idx = int(inp2)
+
+        self.sync()
+
+    def key_event(self, event):
+        if event.char == '\r':
+            self.select_button_event()
+            self.next_button_event()
+        elif event.char == 'f':
+            self.next_button_event()
+        elif event.char == 'b':
+            self.prev_button_event()
+        elif event.char == 'd':
+            self.delete_button_event()
+            self.next_button_event()
+
+    def sync(self):
+        self.ibox1_set(str(self.cur_dataset_idx))
+        self.ibox2_set(str(self.cur_hash_idx))
+
+        images = self.get_imgs_from_cur()
+        images = remove_redundancy(images)
+        self.img_show(images)
+
+        self.frm.focus_set()
 
 
 if __name__ == "__main__":
