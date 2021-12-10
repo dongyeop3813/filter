@@ -128,10 +128,14 @@ class Dataset:
             raise Exception("Hash not found")
         del self.metadata[idx]
 
+        for idx in range(s, e):
+            (self.dir/f"{idx}.jpg").unlink()
+            (self.dir/f"{idx}.npy").unlink()
+
         # modify csv file & metadata
         with open(self.dir/"temp.csv", newline='', mode='w') as csvfile:
             writer = csv.writer(csvfile)
-            for idx, row in enumerate(self.metadata):
+            for row in self.metadata:
                 writer.writerow(row)
 
         self.csv_name.unlink()
