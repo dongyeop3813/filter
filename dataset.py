@@ -15,7 +15,12 @@ class Dataset:
         self.img_list.sort()
 
         self.metadata = self.parse_csv()
-        self.length = len(self.metadata)
+
+        max = 0
+        for row in self.metadata:
+            if int(row[2]) > max:
+                max = int(row[2])
+        self.length = max
 
     def parse_csv(self):
         result = []
@@ -78,7 +83,7 @@ class Dataset:
         return (int(s), int(e))
 
     def __getitem__(self, idx):
-        if idx > self.length or idx < 0:
+        if idx >= self.length or idx < 0:
             raise IndexError
         img = Image.open(self.dir / f"{idx}.jpg")
         npy = np.load(self.dir / f"{idx}.npy")
