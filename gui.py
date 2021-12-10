@@ -15,8 +15,27 @@ class GUI:
         self.root.title("Filtering Images")
         self.root.geometry("800x850")
 
-        self.frm = ttk.Frame(self.root, padding=10)
+        self.init_imgfrm()
+        self.init_ui()
 
+        self.imgfrm.grid(row=0, column=0, columnspan=5)
+        self.frm.grid(row=1, column=0, columnspan=6)
+        self.ui_grid()
+        self.frm.focus_set()
+        self.frm.bind("<Key>", self.key_event)
+
+    def ui_grid(self):
+        self.move_ibox1.grid(row=0, column=2)
+        self.move_ibox2.grid(row=0, column=4)
+        self.prev_button.grid(row=1, column=0)
+        Label(self.frm, text="", width=3).grid(row=1, column=1)
+        self.select_button.grid(row=1, column=2)
+        self.move_button.grid(row=1, column=3)
+        self.delete_button.grid(row=1, column=4)
+        Label(self.frm, text="", width=3).grid(row=1, column=5)
+        self.next_button.grid(row=1, column=6)
+
+    def init_imgfrm(self):
         self.imgfrm = ttk.Frame(
             self.root,
             padding=20,
@@ -26,6 +45,9 @@ class GUI:
 
         self.imgbox = []
         self.img_fill_empty(0)
+
+    def init_ui(self):
+        self.frm = ttk.Frame(self.root, padding=10)
 
         self.move_ibox1 = Text(self.frm, height=2, width=10)
         self.move_ibox2 = Text(self.frm, height=2, width=10)
@@ -61,20 +83,6 @@ class GUI:
             text="Next",
         )
 
-        self.imgfrm.grid(row=0, column=0, columnspan=5)
-        self.frm.grid(row=1, column=0, columnspan=6)
-
-        self.move_ibox1.grid(row=0, column=2)
-        self.move_ibox2.grid(row=0, column=4)
-        self.prev_button.grid(row=1, column=0)
-        Label(self.frm, text="", width=3).grid(row=1, column=1)
-        self.select_button.grid(row=1, column=2)
-        self.move_button.grid(row=1, column=3)
-        self.delete_button.grid(row=1, column=4)
-        Label(self.frm, text="", width=3).grid(row=1, column=5)
-
-        self.next_button.grid(row=1, column=6)
-
     def prev_button_event(self):
         raise NotImplementedError
 
@@ -88,6 +96,9 @@ class GUI:
         raise NotImplementedError
 
     def move_button_event(self):
+        raise NotImplementedError
+
+    def key_event(self, event):
         raise NotImplementedError
 
     def img_fill_empty(self, idx):
