@@ -27,6 +27,15 @@ class GUI:
         self.imgbox = []
         self.img_fill_empty(0)
 
+        self.move_ibox1 = Text(self.frm, height=2, width=10)
+        self.move_ibox2 = Text(self.frm, height=2, width=10)
+        self.move_button = ttk.Button(
+            self.frm,
+            command=self.move_button_event,
+            text="Move",
+            width=10
+            )
+
         self.prev_button = ttk.Button(
             self.frm,
             command=self.prev_button_event,
@@ -55,12 +64,12 @@ class GUI:
         self.imgfrm.grid(row=0, column=0, columnspan=5)
         self.frm.grid(row=1, column=0, columnspan=6)
 
+        self.move_ibox1.grid(row=0, column=2)
+        self.move_ibox2.grid(row=0, column=4)
         self.prev_button.grid(row=1, column=0)
         Label(self.frm, text="", width=3).grid(row=1, column=1)
-
         self.select_button.grid(row=1, column=2)
-        Label(self.frm, text="", width=3).grid(row=1, column=3)
-
+        self.move_button.grid(row=1, column=3)
         self.delete_button.grid(row=1, column=4)
         Label(self.frm, text="", width=3).grid(row=1, column=5)
 
@@ -76,6 +85,9 @@ class GUI:
         raise NotImplementedError
 
     def delete_button_event(self):
+        raise NotImplementedError
+
+    def move_button_event(self):
         raise NotImplementedError
 
     def img_fill_empty(self, idx):
@@ -126,11 +138,21 @@ class GUI:
             self.imgbox.append(img_label)
         self.img_fill_empty(idx+1)
 
+    def ibox1_set(self, text):
+        self.move_ibox1.delete('1.0', END)
+        self.move_ibox1.insert(END, text)
+
+    def ibox2_set(self, text):
+        self.move_ibox2.delete('1.0', END)
+        self.move_ibox2.insert(END, text)
+
 
 if __name__ == "__main__":
     app = GUI()
+    path_list = list(Path("./data/dataset1").glob("*.jpg"))
     imgs = [
-        Image.open(path) for path in Path("./data/dataset1").glob("*.jpg")
+        Image.open(path) for path in path_list[0:10]
         ]
+
     app.img_show(imgs)
     app.root.mainloop()
