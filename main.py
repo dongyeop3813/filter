@@ -78,7 +78,8 @@ class App(GUI):
     def select_button_event(self):
         hash = self.hash_list[self.cur_hash_idx]
         data = self.cur_dataset.get_pairs(hash)
-        self.outcome.append(hash, data)
+        title = self.cur_dataset.get_title(hash)
+        self.outcome.append(hash, data, title)
 
     def delete_button_event(self):
         hash = self.hash_list[self.cur_hash_idx]
@@ -105,8 +106,12 @@ class App(GUI):
             self.next_button_event()
 
     def sync(self):
+        hash = self.hash_list[self.cur_hash_idx]
+
         self.ibox1_set(str(self.cur_dataset_idx))
         self.ibox2_set(str(self.cur_hash_idx))
+
+        self.set_title(self.cur_dataset.get_title(hash))
 
         images = self.get_imgs_from_cur()
         images = remove_redundancy(images)

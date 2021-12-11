@@ -24,7 +24,7 @@ class Dataset:
 
     def parse_csv(self):
         result = []
-        with open(self.csv_name, newline='') as csvfile:
+        with open(self.csv_name, newline='', encoding='UTF8') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             for row in reader:
                 result.append(row)
@@ -32,7 +32,7 @@ class Dataset:
 
     def get_hash(self):
         hash = []
-        with open(self.csv_name, newline='') as csvfile:
+        with open(self.csv_name, newline='', encoding='UTF8') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 hash.append(row[0])
@@ -82,6 +82,12 @@ class Dataset:
             raise Exception("Hash value not found")
         return (int(s), int(e))
 
+    def get_title(self, hash):
+        for row in self.metadata:
+            if row[0] == hash:
+                return row[3]
+        raise Exception("Hash value not found")
+
     def __getitem__(self, idx):
         if idx >= self.length or idx < 0:
             raise IndexError
@@ -89,7 +95,7 @@ class Dataset:
         npy = np.load(self.dir / f"{idx}.npy")
         return (img, npy)
 
-    def append(self, hash, data, close=True):
+    def append(self, hash, data, title, close=True):
         found = False
         for idx, row in enumerate(self.metadata):
             if row[0] == hash:
@@ -110,10 +116,15 @@ class Dataset:
 
         e = self.length
 
-        with open(self.csv_name, newline='', mode='a') as csvfile:
+        with open(
+            self.csv_name,
+            newline='',
+            mode='a',
+            encoding='UTF8'
+        ) as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([hash, s, e])
-            self.metadata.append([hash, s, e])
+            writer.writerow([hash, s, e, title])
+            self.metadata.append([hash, s, e, title])
 
     def delete(self, hash):
         found = False
@@ -133,11 +144,17 @@ class Dataset:
             (self.dir/f"{idx}.npy").unlink()
 
         # modify csv file & metadata
-        with open(self.dir/"temp.csv", newline='', mode='w') as csvfile:
+        with open(
+            self.dir/"temp.csv",
+            newline='',
+            mode='w',
+            encoding='UTF8'
+        ) as csvfile:
             writer = csv.writer(csvfile)
             for row in self.metadata:
                 writer.writerow(row)
 
+        # change filename from temp.csv to data.csv
         self.csv_name.unlink()
         (self.dir/"temp.csv").rename(self.csv_name)
 

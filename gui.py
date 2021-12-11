@@ -13,16 +13,21 @@ class GUI:
         self.root = Tk()
 
         self.root.title("Filtering Images")
-        self.root.geometry("800x850")
+        self.root.geometry("800x900")
 
         self.init_imgfrm()
         self.init_ui()
+        self.text_ui()
 
         self.imgfrm.grid(row=0, column=0, columnspan=5)
-        self.frm.grid(row=1, column=0, columnspan=6)
+        self.vid_title.grid(row=1, column=0, columnspan=5)
+        self.frm.grid(row=2, column=0, columnspan=6)
         self.ui_grid()
         self.frm.focus_set()
         self.frm.bind("<Key>", self.key_event)
+
+    def text_ui(self):
+        self.vid_title = Label(self.root, text="This is title", width=80)
 
     def ui_grid(self):
         self.move_ibox1.grid(row=0, column=2)
@@ -156,6 +161,9 @@ class GUI:
     def ibox2_set(self, text):
         self.move_ibox2.delete('1.0', END)
         self.move_ibox2.insert(END, text)
+
+    def set_title(self, text):
+        self.vid_title.configure(text=text)
 
 
 if __name__ == "__main__":
