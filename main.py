@@ -1,11 +1,12 @@
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageFilter
 import numpy as np
 
 from dataset import Dataset
 from gui import GUI
 
 from image import remove_redundancy
+from ai import predict
 
 OUTCOME_DIR = "./dataset"
 INPUT_DATA_DIR = "./data"
@@ -105,6 +106,17 @@ class App(GUI):
             self.delete_button_event()
             self.next_button_event()
 
+    def img_enter_event(self, i, j):
+        pass
+
+    def img_leave_event(self, i, j):
+        pass
+
+    def img_click_event(self, i, j):
+        idx = i * 5 + j
+        senti = predict(self.cur_img[idx])
+        self.set_senti(senti)
+
     def sync(self):
         hash = self.hash_list[self.cur_hash_idx]
 
@@ -116,6 +128,7 @@ class App(GUI):
         images = self.get_imgs_from_cur()
         images = remove_redundancy(images)
         self.img_show(images)
+        self.cur_img = images
 
         self.frm.focus_set()
 

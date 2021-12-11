@@ -13,21 +13,33 @@ class GUI:
         self.root = Tk()
 
         self.root.title("Filtering Images")
-        self.root.geometry("800x900")
+        self.root.geometry("900x900")
 
         self.init_imgfrm()
         self.init_ui()
         self.text_ui()
 
         self.imgfrm.grid(row=0, column=0, columnspan=5)
-        self.vid_title.grid(row=1, column=0, columnspan=5)
         self.frm.grid(row=2, column=0, columnspan=6)
+        self.text_ui_grid()
         self.ui_grid()
         self.frm.focus_set()
         self.frm.bind("<Key>", self.key_event)
 
     def text_ui(self):
         self.vid_title = Label(self.root, text="This is title", width=80)
+
+        self.senti = ttk.Frame(self.root)
+        self.pos_label = Label(self.senti, text="POS: ")
+        self.nue_label = Label(self.senti, text="NUE: ")
+        self.neg_label = Label(self.senti, text="NEG: ")
+
+    def text_ui_grid(self):
+        self.vid_title.grid(row=1, column=0, columnspan=5)
+        self.senti.grid(row=0, column=6)
+        self.pos_label.grid(row=0, column=0)
+        self.nue_label.grid(row=1, column=0)
+        self.neg_label.grid(row=2, column=0)
 
     def ui_grid(self):
         self.move_ibox1.grid(row=0, column=2)
@@ -106,6 +118,30 @@ class GUI:
     def key_event(self, event):
         raise NotImplementedError
 
+    def img_click_event(self, i, j):
+        raise NotImplementedError
+
+    def img_enter_event(self, i, j):
+        raise NotImplementedError
+
+    def img_leave_event(self, i, j):
+        raise NotImplementedError
+
+    def img_click_bind(self, i, j):
+        def click_event_wrapper(event):
+            self.img_click_event(i, j)
+        return click_event_wrapper
+
+    def img_enter_bind(self, i, j):
+        def enter_event_wrapper(event):
+            self.img_enter_event(i, j)
+        return enter_event_wrapper
+
+    def img_leave_bind(self, i, j):
+        def leave_event_wrapper(event):
+            self.img_leave_event(i, j)
+        return leave_event_wrapper
+
     def img_fill_empty(self, idx):
         empty_img = ImageTk.PhotoImage(
             Image.open("empty.jpg").resize((SIDE, SIDE))
@@ -151,6 +187,18 @@ class GUI:
                 row=idx//5,
                 column=idx % 5,
             )
+            img_label.bind(
+                "<Button-1>",
+                self.img_click_bind(idx//5, idx % 5)
+            )
+            img_label.bind(
+                "<Enter>",
+                self.img_enter_bind(idx//5, idx % 5)
+            )
+            img_label.bind(
+                "<Leave>",
+                self.img_leave_bind(idx//5, idx % 5)
+            )
             self.imgbox.append(img_label)
         self.img_fill_empty(idx+1)
 
@@ -165,10 +213,34 @@ class GUI:
     def set_title(self, text):
         self.vid_title.configure(text=text)
 
+    def set_senti(self, senti):
+        pos = senti[2]
+        neu = senti[1]
+        neg = senti[0]
+
+        self.pos_label.configure(text=f"POS: {pos:>3f}")
+        self.nue_label.configure(text=f"NEU: {neu:>3f}")
+        self.neg_label.configure(text=f"NEG: {neg:>3f}")
+
+        ls = [(neg, 0), (neu, 1), (pos, 2)]
+        ls.sort(reverse=True)
+
+        self.set_senti_color(ls[0][1], "red")
+        self.set_senti_color(ls[1][1], "black")
+        self.set_senti_color(ls[2][1], "blue")
+
+    def set_senti_color(self, idx, color):
+        if idx == 0:
+            self.neg_label.configure(fg=color)
+        elif idx == 1:
+            self.nue_label.configure(fg=color)
+        elif idx == 2:
+            self.pos_label.configure(fg=color)
+
 
 if __name__ == "__main__":
     app = GUI()
-    path_list = list(Path("./data/dataset1").glob("*.jpg"))
+    path_list = list(Path("./data/data1").glob("*.jpg"))
     imgs = [
         Image.open(path) for path in path_list[0:10]
         ]
