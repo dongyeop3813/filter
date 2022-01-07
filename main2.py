@@ -7,8 +7,8 @@ from gui2 import GUI
 
 from ai import predict
 
-OUTCOME_DIR = "./dataset"
-INPUT_DATA_DIR = "../dataset"
+OUTCOME_DIR = "(SET_YOUR_OWN_DIR)"
+INPUT_DATA_DIR = "(SET_YOUR_OWN_DIR)"
 
 
 class App(GUI):
