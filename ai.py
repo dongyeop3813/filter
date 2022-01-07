@@ -19,7 +19,7 @@ model_pth = "vgg19_finetuned_all.pth"
 if not tmp_dir.exists():
     tmp_dir.mkdir()
 
-sys.path.append(str(vsa_dir)+"\\.")
+sys.path.append(str(vsa_dir))
 
 vgg19 = importlib.import_module("vgg19")
 model = vgg19.KitModel(vsa_dir/model_dir/model_pth)

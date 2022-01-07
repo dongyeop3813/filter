@@ -9,7 +9,7 @@ from image import remove_redundancy
 from ai import predict
 
 OUTCOME_DIR = "./dataset"
-INPUT_DATA_DIR = "./data"
+INPUT_DATA_DIR = "../dataset"
 
 
 class App(GUI):
